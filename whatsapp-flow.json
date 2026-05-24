@@ -1,0 +1,234 @@
+{
+    "version": "7.3",
+    "data_api_version": "3.0",
+    "routing_model": {
+        "FUEL_SELECTION": [
+            "ORDER_SUMMARY"
+        ],
+        "ORDER_SUMMARY": []
+    },
+    "screens": [
+        {
+            "id": "FUEL_SELECTION",
+            "title": "Fuel Order",
+            "data": {
+                "min_date": {
+                    "type": "string",
+                    "__example__": "2024-06-01"
+                },
+                "max_date": {
+                    "type": "string",
+                    "__example__": "2025-12-31"
+                },
+                "unavailable_dates": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "__example__": ["2024-06-15", "2024-07-04"]
+                }
+            },
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "Form",
+                        "name": "fuel_selection_form",
+                        "children": [
+                            {
+                                "type": "Dropdown",
+                                "label": "Fuel Supplier",
+                                "name": "fuel_supplier",
+                                "data-source": [
+                                    { "id": "offen_petroleum", "title": "Offen Petroleum" },
+                                    { "id": "flyers", "title": "Flyers" }
+                                ],
+                                "required": true
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Regular (Gallons)",
+                                "name": "regular_qty",
+                                "input-type": "text",
+                                "helper-text": "e.g. 6500, 7500, 8500, 9000 or any amount",
+                                "required": false
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Premium (Gallons)",
+                                "name": "premium_qty",
+                                "input-type": "text",
+                                "helper-text": "e.g. 6500, 7500, 8500, 9000 or any amount",
+                                "required": false
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Diesel (Gallons)",
+                                "name": "diesel_qty",
+                                "input-type": "text",
+                                "helper-text": "e.g. 6500, 7500, 8500, 9000 or any amount",
+                                "required": false
+                            },
+                            {
+                                "type": "DatePicker",
+                                "label": "Delivery Date",
+                                "name": "delivery_date",
+                                "min-date": "${data.min_date}",
+                                "max-date": "${data.max_date}",
+                                "unavailable-dates": "${data.unavailable_dates}",
+                                "required": true
+                            },
+                            {
+                                "type": "Dropdown",
+                                "label": "Delivery Time Window",
+                                "name": "delivery_slot",
+                                "data-source": [
+                                    { "id": "1am-5am", "title": "1:00 AM - 5:00 AM" },
+                                    { "id": "5am-9am", "title": "5:00 AM - 9:00 AM" },
+                                    { "id": "10am-2pm", "title": "10:00 AM - 2:00 PM" },
+                                    { "id": "2pm-5pm", "title": "2:00 PM - 5:00 PM" },
+                                    { "id": "5pm-10pm", "title": "5:00 PM - 10:00 PM" }
+                                ],
+                                "required": true
+                            },
+                            {
+                                "type": "Footer",
+                                "label": "Review Order",
+                                "on-click-action": {
+                                    "name": "navigate",
+                                    "next": {
+                                        "type": "screen",
+                                        "name": "ORDER_SUMMARY"
+                                    },
+                                    "payload": {
+                                        "fuel_supplier": "${form.fuel_supplier}",
+                                        "regular_qty": "${form.regular_qty}",
+                                        "premium_qty": "${form.premium_qty}",
+                                        "diesel_qty": "${form.diesel_qty}",
+                                        "delivery_date": "${form.delivery_date}",
+                                        "delivery_slot": "${form.delivery_slot}"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": "ORDER_SUMMARY",
+            "title": "Order Summary",
+            "terminal": true,
+            "data": {
+                "fuel_supplier": {
+                    "type": "string",
+                    "__example__": "offen_petroleum"
+                },
+                "regular_qty": {
+                    "type": "string",
+                    "__example__": "6500"
+                },
+                "premium_qty": {
+                    "type": "string",
+                    "__example__": "7500"
+                },
+                "diesel_qty": {
+                    "type": "string",
+                    "__example__": "0"
+                },
+                "delivery_date": {
+                    "type": "string",
+                    "__example__": "2024-06-01"
+                },
+                "delivery_slot": {
+                    "type": "string",
+                    "__example__": "5am-9am"
+                }
+            },
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "Form",
+                        "name": "order_confirmation_form",
+                        "init-values": {
+                            "summary_supplier": "${data.fuel_supplier}",
+                            "summary_regular": "${data.regular_qty}",
+                            "summary_premium": "${data.premium_qty}",
+                            "summary_diesel": "${data.diesel_qty}",
+                            "summary_date": "${data.delivery_date}",
+                            "summary_slot": "${data.delivery_slot}"
+                        },
+                        "children": [
+                            {
+                                "type": "TextHeading",
+                                "text": "Order Details"
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Supplier",
+                                "name": "summary_supplier",
+                                "input-type": "text",
+                                "enabled": false,
+                                "required": false
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Regular (Gallons)",
+                                "name": "summary_regular",
+                                "input-type": "text",
+                                "enabled": false,
+                                "required": false
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Premium (Gallons)",
+                                "name": "summary_premium",
+                                "input-type": "text",
+                                "enabled": false,
+                                "required": false
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Diesel (Gallons)",
+                                "name": "summary_diesel",
+                                "input-type": "text",
+                                "enabled": false,
+                                "required": false
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Delivery Date",
+                                "name": "summary_date",
+                                "input-type": "text",
+                                "enabled": false,
+                                "required": false
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Delivery Time",
+                                "name": "summary_slot",
+                                "input-type": "text",
+                                "enabled": false,
+                                "required": false
+                            },
+                            {
+                                "type": "Footer",
+                                "label": "Place Order",
+                                "on-click-action": {
+                                    "name": "complete",
+                                    "payload": {
+                                        "fuel_supplier": "${data.fuel_supplier}",
+                                        "regular_qty": "${data.regular_qty}",
+                                        "premium_qty": "${data.premium_qty}",
+                                        "diesel_qty": "${data.diesel_qty}",
+                                        "delivery_date": "${data.delivery_date}",
+                                        "delivery_slot": "${data.delivery_slot}"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
